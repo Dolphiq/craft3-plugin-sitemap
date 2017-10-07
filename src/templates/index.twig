@@ -1,0 +1,45 @@
+{#
+/**
+ * sitemap plugin for Craft CMS 3.x
+ *
+ * sitemap index.twig
+ *
+ * @author    Johan Zandstra
+ * @copyright Copyright (c) 2017 Johan Zandstra
+ * @link      https://github.com/Dolphiq/craft3-plugin-sitemap
+ * @package   Sitemap
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("dolphiq\\sitemap\\assetbundles\\sitemap\\SitemapAsset") %}
+{% do view.registerAssetBundle("dolphiq\\sitemap\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{# Link for the ? icon at the bottom of the page #}
+{% set docsUrl = "???" %}
+
+{# The title of this CP section #}
+{% set title = "sitemap" %}
+
+{# The URL to this plugin's base CP section #}
+{% set pluginCpUrl = url('sitemap') %}
+
+{# Get a URL to an image in our AssetBundle #}
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@dolphiq/sitemap/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{# Content that should appear in the page header#}
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('sitemap') }}</a>
+    </div>
+{% endset %}
+
+{# The content of the CP Section#}
+{% set content %}
+    <h2>{{ "Index CP Section body goes here"|t('sitemap') }}</h2>
+    <img src="{{ iconUrl }}" height="64" width="64" />
+    <p class="textline"></p>
+{% endset %}

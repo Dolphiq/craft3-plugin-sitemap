@@ -1,0 +1,25 @@
+{#
+/**
+ * sitemap plugin for Craft CMS 3.x
+ *
+ * sitemap Settings.twig
+ *
+ * @author    Johan Zandstra
+ * @copyright Copyright (c) 2017 Johan Zandstra
+ * @link      https://github.com/Dolphiq/craft3-plugin-sitemap
+ * @package   Sitemap
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("dolphiq\\sitemap\\assetbundles\\sitemap\\SitemapAsset") %}
+
+{{ forms.textField({
+    label: 'Some Field',
+    instructions: 'Enter some setting here.',
+    id: 'someAttribute',
+    name: 'someAttribute',
+    value: settings['someAttribute']})
+}}
