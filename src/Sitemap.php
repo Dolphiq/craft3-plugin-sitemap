@@ -56,6 +56,53 @@ class Sitemap extends Plugin
     // Public Methods
     // =========================================================================
 
+    public $hasCpSection = true;
+    public $hasCpSettings = true;
+
+    // table schema version
+    public $schemaVersion = '1.0.0';
+
+    /**
+     * Return the settings response (if some one clicks on the settings/plugin icon)
+     *
+     */
+
+    public function getSettingsResponse()
+    {
+        $url = \craft\helpers\UrlHelper::cpUrl('settings/sitemap');
+        return \Craft::$app->controller->redirect($url);
+    }
+
+    /**
+     * Register CP URL rules
+     *
+     * @param RegisterUrlRulesEvent $event
+     */
+
+    public function registerCpUrlRules(RegisterUrlRulesEvent $event)
+    {
+        $rules = [
+            // register routes for the sub nav
+            'redirect' => 'redirect/settings',
+            'redirect/new' => 'redirect/settings/edit-redirect',
+            'redirect/<redirectId:\d+>' => 'redirect/settings/edit-redirect',
+
+            // register routes for the settings tab
+            'settings/sitemap' => [
+                'route'=>'sitemap/settings',
+                'params'=>['source' => 'CpSettings']],
+            'settings/redirect/settings' => [
+                'route'=>'redirect/settings/settings',
+                'params'=>['source' => 'CpSettings']],
+            'settings/redirect/new' => [
+                'route'=>'redirect/settings/edit-redirect',
+                'params'=>['source' => 'CpSettings']],
+            'settings/redirect/<redirectId:\d+>' => [
+                'route'=>'redirect/settings/edit-redirect',
+                'params'=>['source' => 'CpSettings']],
+        ];
+        $event->rules = array_merge($event->rules, $rules);
+    }
     /**
      * Set our $plugin static property to this class so that it can be accessed via
      * Sitemap::$plugin
@@ -71,8 +118,16 @@ class Sitemap extends Plugin
     {
         parent::init();
         self::$plugin = $this;
-
-        // Register our site routes
+        // only register CP URLs if the user is logged in
+        if (\Craft::$app->user->identity) {
+            // Register our CP routes
+            Event::on(
+                UrlManager::class,
+                UrlManager::EVENT_REGISTER_CP_URL_RULES,
+                [$this, 'registerCpUrlRules']
+            );
+        }
+ /*     // Register our site routes
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
@@ -81,15 +136,8 @@ class Sitemap extends Plugin
             }
         );
 
-        // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'sitemap/default/do-something';
-            }
-        );
 
+*/
         // Do something after we're installed
         Event::on(
             Plugins::class,

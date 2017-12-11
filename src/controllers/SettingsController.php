@@ -35,7 +35,7 @@ use craft\web\Controller;
  * @package   Sitemap
  * @since     1.0.0
  */
-class DefaultController extends Controller
+class SettingsController extends Controller
 {
 
     // Protected Properties
@@ -46,7 +46,7 @@ class DefaultController extends Controller
      *         The actions must be in 'kebab-case'
      * @access protected
      */
-    protected $allowAnonymous = ['index', 'do-something'];
+    protected $allowAnonymous = false;
 
     // Public Methods
     // =========================================================================
@@ -57,11 +57,22 @@ class DefaultController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex(): craft\web\Response
     {
-        $result = 'Welcome to the DefaultController actionIndex() method';
+        $this->requireLogin();
 
-        return $result;
+        $routeParameters = Craft::$app->getUrlManager()->getRouteParams();
+
+        $source = (isset($routeParameters['source'])?$routeParameters['source']:'CpSection');
+
+        $variables = [
+            'settings' => Sitemap::$plugin->getSettings(),
+            'source' => $source,
+            'pathPrefix' => ($source == 'CpSettings' ? 'settings/': ''),
+            // 'allRedirects' => $allRedirects
+        ];
+
+        return $this->renderTemplate('sitemap/index', $variables);
     }
 
     /**

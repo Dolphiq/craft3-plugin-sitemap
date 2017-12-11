@@ -6,7 +6,7 @@ Craft 3 plugin that provides an easy way to enable and manage a xml sitemap for 
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+This plugin requires Craft CMS 3.0.0-RC1 or later.
 
 ## Installation
 

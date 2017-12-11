@@ -15,14 +15,14 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
+{% set fullPageForm = true %}
+
 {% do view.registerAssetBundle("dolphiq\\sitemap\\assetbundles\\sitemap\\SitemapAsset") %}
 {% do view.registerAssetBundle("dolphiq\\sitemap\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
 
-{# Link for the ? icon at the bottom of the page #}
-{% set docsUrl = "???" %}
 
 {# The title of this CP section #}
-{% set title = "sitemap" %}
+{% set title = "Sitemap settings" %}
 
 {# The URL to this plugin's base CP section #}
 {% set pluginCpUrl = url('sitemap') %}
@@ -30,16 +30,88 @@
 {# Get a URL to an image in our AssetBundle #}
 {% set iconUrl = view.getAssetManager().getPublishedUrl('@dolphiq/sitemap/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
 
-{# Content that should appear in the page header#}
-{% set extraPageHeaderHtml %}
-    <div class="buttons">
-        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('sitemap') }}</a>
-    </div>
-{% endset %}
 
 {# The content of the CP Section#}
-{% set content %}
-    <h2>{{ "Index CP Section body goes here"|t('sitemap') }}</h2>
-    <img src="{{ iconUrl }}" height="64" width="64" />
-    <p class="textline"></p>
-{% endset %}
+{% block content %}
+
+    {% set sitemapErrors = [] %}
+    {% set sitemapRows = [{
+        'heading': 'Include',
+        'enabled': include('_includes/forms/lightswitch', {
+    name: 'test',
+    on: true,
+    value: 1,
+    small: true
+    }),
+        'priority': 'high'
+    }] %}
+    {{ forms.editableTableField({
+        label: "Site Settings"|t('app'),
+        instructions: "Choose which sites this section should be available in, and configure the site-specific settings."|t('app'),
+        id: 'sitemaps',
+        name: 'sitemaps',
+        cols: {
+            heading: {
+                type: 'heading',
+                heading: "Site"|t('app'),
+                class: 'thin'
+            },
+            enabled: {
+                type: 'heading',
+                class: 'thin',
+                name: 'test',
+
+                value: '1',
+                small: true
+            },
+            priority: {
+                heading : 'Some column',
+                type: 'select',
+                options: [{label: 'Foo', value: 'foo'}, {label: 'Bar', value: 'bar'}]
+            },
+            changefreq: {
+                heading : 'Some column',
+                type: 'select',
+                options: [
+                    {label: 'always', value: 'always'},
+                    {label: 'hourly', value: 'hourly'},
+                    {label: 'daily', value: 'daily'},
+                    {label: 'weekly', value: 'weekly'},
+                    {label: 'monthly', value: 'monthly'},
+                    {label: 'yearly', value: 'yearly'},
+                    {label: 'never', value: 'never'}
+                ]
+            }
+        },
+        rows: sitemapRows,
+        staticRows: true,
+        errors: sitemapErrors|unique
+    }) }}
+{% endblock %}
+
+{% js %}
+var $sitemapRows = $('#sitemaps').children('tbody').children(),
+$lightswitches = $sitemapRows.children('th:nth-child(2)').children('.lightswitch');
+
+
+console.log($lightswitches);
+
+function updateSitemaps() {
+    console.log('updateSitemaps');
+    $lightswitches.each(function() {
+        if ($(this).data('lightswitch').on) {
+            $(this).parent().nextAll('td').removeClass('disabled').find('textarea,div.lightswitch,input').attr('tabindex', '0');
+        } else {
+            $(this).parent().nextAll('td').addClass('disabled').find('textarea,div.lightswitch,input').attr('tabindex', '-1');
+        }
+    });
+}
+
+$lightswitches.on('change', updateSitemaps);
+
+Garnish.$doc.ready(function() {
+// updateSites();
+});
+
+
+{% endjs %}
