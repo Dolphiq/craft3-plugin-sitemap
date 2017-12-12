@@ -43,7 +43,9 @@
     value: 1,
     small: true
     }),
-        'priority': 'high'
+        'priority': '1',
+        'changefreq' : 'monthly',
+        'entries' : 4
     }] %}
     {{ forms.editableTableField({
         label: "Site Settings"|t('app'),
@@ -53,7 +55,7 @@
         cols: {
             heading: {
                 type: 'heading',
-                heading: "Site"|t('app'),
+                heading: "Include in Sitemap"|t('app'),
                 class: 'thin'
             },
             enabled: {
@@ -64,13 +66,9 @@
                 value: '1',
                 small: true
             },
-            priority: {
-                heading : 'Some column',
-                type: 'select',
-                options: [{label: 'Foo', value: 'foo'}, {label: 'Bar', value: 'bar'}]
-            },
+
             changefreq: {
-                heading : 'Some column',
+                heading : 'Change frequency',
                 type: 'select',
                 options: [
                     {label: 'always', value: 'always'},
@@ -81,6 +79,15 @@
                     {label: 'yearly', value: 'yearly'},
                     {label: 'never', value: 'never'}
                 ]
+            },
+            priority: {
+                heading : 'Priority',
+                type: 'select',
+                options: [{label: 'Foo', value: 'foo'}, {label: 'Bar', value: 'bar'}]
+            },
+            entries: {
+                heading : 'Entries',
+                type: 'heading',
             }
         },
         rows: sitemapRows,
