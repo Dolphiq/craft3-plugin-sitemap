@@ -13,6 +13,7 @@ namespace dolphiq\sitemap\controllers;
 use dolphiq\sitemap\Sitemap;
 
 use Craft;
+use craft\db\Query;
 use craft\web\Controller;
 
 /**
@@ -48,15 +49,33 @@ class SettingsController extends Controller
      */
     protected $allowAnonymous = false;
 
-    // Public Methods
-    // =========================================================================
+    private function _createEntrySectionQuery(): Query
+    {
+        return (new Query())
+        ->select([
+            'sections.id',
+            'sections.structureId',
+            'sections.name',
+            'sections.handle',
+            'sections.type',
+            'sections.enableVersioning',
+            'structures.maxLevels',
+        ])
+        ->leftJoin('{{%structures}} structures', '[[structures.id]] = [[sections.structureId]]')
+        ->from(['{{%sections}} sections'])
+        ->orderBy(['name' => SORT_ASC]);
+    }
 
-    /**
-     * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/sitemap/default
-     *
-     * @return mixed
-     */
+
+// Public Methods
+// =========================================================================
+
+/**
+* Handle a request going to our plugin's index action URL,
+* e.g.: actions/sitemap/default
+*
+* @return mixed
+*/
     public function actionIndex(): craft\web\Response
     {
         $this->requireLogin();
@@ -65,14 +84,41 @@ class SettingsController extends Controller
 
         $source = (isset($routeParameters['source'])?$routeParameters['source']:'CpSection');
 
+
+        // $allSections = Craft::$app->getSections()->getAllSections();
+        $allSections = $this->_createEntrySectionQuery()->all();
+        $allStructures = [];
+        // print_r($allSections);
+        foreach($allSections as $section) {
+            $allStructures[] = [
+                'id' => $section['id'],
+                'type'=> $section['type'],
+                'heading' => $section['name'],
+                'enabled' => true
+            ];
+        }
         $variables = [
             'settings' => Sitemap::$plugin->getSettings(),
             'source' => $source,
             'pathPrefix' => ($source == 'CpSettings' ? 'settings/': ''),
+            'allStructures' => $allStructures
             // 'allRedirects' => $allRedirects
         ];
 
         return $this->renderTemplate('sitemap/index', $variables);
+    }
+
+    /**
+     * Called when saving the settings.
+     *
+     * @return Response
+     */
+    public function actionSaveSitemap(): craft\web\Response
+    {
+        $this->requirePostRequest();
+        $this->requireAdmin();
+        $request = Craft::$app->getRequest();
+
     }
 
     /**

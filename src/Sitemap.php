@@ -82,23 +82,13 @@ class Sitemap extends Plugin
     public function registerCpUrlRules(RegisterUrlRulesEvent $event)
     {
         $rules = [
-            // register routes for the sub nav
-            'redirect' => 'redirect/settings',
-            'redirect/new' => 'redirect/settings/edit-redirect',
-            'redirect/<redirectId:\d+>' => 'redirect/settings/edit-redirect',
 
             // register routes for the settings tab
             'settings/sitemap' => [
                 'route'=>'sitemap/settings',
                 'params'=>['source' => 'CpSettings']],
-            'settings/redirect/settings' => [
-                'route'=>'redirect/settings/settings',
-                'params'=>['source' => 'CpSettings']],
-            'settings/redirect/new' => [
-                'route'=>'redirect/settings/edit-redirect',
-                'params'=>['source' => 'CpSettings']],
-            'settings/redirect/<redirectId:\d+>' => [
-                'route'=>'redirect/settings/edit-redirect',
+            'settings/sitemap/save-sitemap' => [
+                'route'=>'sitemap/settings/save-sitemap',
                 'params'=>['source' => 'CpSettings']],
         ];
         $event->rules = array_merge($event->rules, $rules);

@@ -15,6 +15,8 @@
 {% extends "_layouts/cp" %}
 {% import "_includes/forms" as forms %}
 
+
+
 {% set fullPageForm = true %}
 
 {% do view.registerAssetBundle("dolphiq\\sitemap\\assetbundles\\sitemap\\SitemapAsset") %}
@@ -33,43 +35,65 @@
 
 {# The content of the CP Section#}
 {% block content %}
+    <input type="hidden" name="action" value="sitemap/settings/save-sitemap">
+
+    {{ redirectInput('settings/sitemap') }}
+
+    {% set sitemapRows = [] %}
+
+    {% if allStructures|length %}
+        {% for structure in allStructures %}
+
+
+            {% set sitemapRows = sitemapRows|merge({
+                (structure.id): {
+                heading: structure.heading,
+                type: structure.type,
+                enabled: include('_includes/forms/lightswitch', {
+                name: 'sitemaps['~structure.id~'][enabled]',
+                on: structure.enabled,
+                value: 1,
+                small: true
+                }),
+                priority: 0.5,
+                changefreq : 'monthly',
+                entries : 4
+                }
+            }) %}
+        {% endfor %}
+    {% endif %}
 
     {% set sitemapErrors = [] %}
-    {% set sitemapRows = [{
-        'heading': 'Include',
-        'enabled': include('_includes/forms/lightswitch', {
-    name: 'test',
-    on: true,
-    value: 1,
-    small: true
-    }),
-        'priority': '1',
-        'changefreq' : 'monthly',
-        'entries' : 4
-    }] %}
+
+
+
     {{ forms.editableTableField({
         label: "Site Settings"|t('app'),
-        instructions: "Choose which sites this section should be available in, and configure the site-specific settings."|t('app'),
+        instructions: "Choose which entry structures should be listed in the sitemap, and configure the crawl settings."|t('app'),
         id: 'sitemaps',
         name: 'sitemaps',
         cols: {
             heading: {
                 type: 'heading',
                 heading: "Include in Sitemap"|t('app'),
-                class: 'thin'
+
             },
+
             enabled: {
                 type: 'heading',
                 class: 'thin',
                 name: 'test',
-
                 value: '1',
                 small: true
             },
-
+            type: {
+                type: 'heading',
+                heading: 'Type'
+            },
             changefreq: {
                 heading : 'Change frequency',
                 type: 'select',
+                info: "The value \"always\" should be used to describe documents that change each time they are accessed. The value \"never\" should be used to describe archived URLs.",
                 options: [
                     {label: 'always', value: 'always'},
                     {label: 'hourly', value: 'hourly'},
@@ -78,15 +102,32 @@
                     {label: 'monthly', value: 'monthly'},
                     {label: 'yearly', value: 'yearly'},
                     {label: 'never', value: 'never'}
-                ]
+                ],
+                small: true
             },
             priority: {
                 heading : 'Priority',
                 type: 'select',
-                options: [{label: 'Foo', value: 'foo'}, {label: 'Bar', value: 'bar'}]
+                info: "The priority of this URL relative to other URLs on your site. This value does not affect how your pages are compared to pages on other sites.
+The default priority of a page is 0.5.<br>
+Please note that the priority you assign to a page is not likely to influence the position of your URLs in a search engine's result pages. Search engines may use this information when selecting between URLs on the same site."|t('app'),
+                options: [
+                    {label: '0.1', value: 0.1},
+                    {label: '0.2', value: 0.2},
+                    {label: '0.3', value: 0.3},
+                    {label: '0.4', value: 0.4},
+                    {label: '0.5', value: 0.5},
+                    {label: '0.6', value: 0.6},
+                    {label: '0.7', value: 0.7},
+                    {label: '0.8', value: 0.8},
+                    {label: '0.9', value: 0.9},
+                    {label: '1.0', value: 1.0}
+                ],
+                small: true
             },
             entries: {
                 heading : 'Entries',
+                info: "The number of underlying entries (published and enabled), with a public url",
                 type: 'heading',
             }
         },
@@ -97,6 +138,7 @@
 {% endblock %}
 
 {% js %}
+
 var $sitemapRows = $('#sitemaps').children('tbody').children(),
 $lightswitches = $sitemapRows.children('th:nth-child(2)').children('.lightswitch');
 
@@ -117,7 +159,7 @@ function updateSitemaps() {
 $lightswitches.on('change', updateSitemaps);
 
 Garnish.$doc.ready(function() {
-// updateSites();
+    updateSitemaps();
 });
 
 
