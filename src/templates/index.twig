@@ -46,11 +46,11 @@
 
 
             {% set sitemapRows = sitemapRows|merge({
-                (section.id): {
+                ('section:' ~ section.id): {
                 heading: section.heading,
                 type: section.type,
                 enabled: include('_includes/forms/lightswitch', {
-                name: 'sitemaps['~section.id~'][enabled]',
+                name: 'sitemaps[section:'~section.id~'][enabled]',
                 on: section.enabled,
                 value: 1,
                 small: true
