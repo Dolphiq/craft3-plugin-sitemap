@@ -42,22 +42,22 @@
     {% set sitemapRows = [] %}
 
     {% if allStructures|length %}
-        {% for structure in allStructures %}
+        {% for section in allStructures %}
 
 
             {% set sitemapRows = sitemapRows|merge({
-                (structure.id): {
-                heading: structure.heading,
-                type: structure.type,
+                (section.id): {
+                heading: section.heading,
+                type: section.type,
                 enabled: include('_includes/forms/lightswitch', {
-                name: 'sitemaps['~structure.id~'][enabled]',
-                on: structure.enabled,
+                name: 'sitemaps['~section.id~'][enabled]',
+                on: section.enabled,
                 value: 1,
                 small: true
                 }),
                 priority: 0.5,
                 changefreq : 'monthly',
-                entries : 4
+                entries : section.elementCount
                 }
             }) %}
         {% endfor %}
@@ -68,8 +68,8 @@
 
 
     {{ forms.editableTableField({
-        label: "Site Settings"|t('app'),
-        instructions: "Choose which entry structures should be listed in the sitemap, and configure the crawl settings."|t('app'),
+        label: "Sitemap Settings"|t('app'),
+        instructions: "Choose which entry sections should be listed in the sitemap, and configure the crawl settings. <b>Note: the sections should have url's to get listed here </b>"|t('app'),
         id: 'sitemaps',
         name: 'sitemaps',
         cols: {

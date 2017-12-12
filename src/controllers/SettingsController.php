@@ -60,10 +60,18 @@ class SettingsController extends Controller
             'sections.type',
             'sections.enableVersioning',
             'structures.maxLevels',
+            'count(DISTINCT entries.id) entryCount',
+            'count(DISTINCT elements.id) elementCount'
         ])
-        ->leftJoin('{{%structures}} structures', '[[structures.id]] = [[sections.structureId]]')
+            ->leftJoin('{{%structures}} structures', '[[structures.id]] = [[sections.structureId]]')
+            ->innerJoin('{{%sections_sites}} sections_sites', '[[sections_sites.sectionId]] = [[sections.id]] AND [[sections_sites.hasUrls]] = 1')
+            ->leftJoin('{{%entries}} entries', '[[sections.id]] = [[entries.sectionId]]')
+            ->leftJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
         ->from(['{{%sections}} sections'])
-        ->orderBy(['name' => SORT_ASC]);
+
+            ->from(['{{%sections}} sections'])
+            ->groupBy(['sections.id'])
+        ->orderBy(['type' => SORT_ASC],['name' => SORT_ASC]);
     }
 
 
@@ -94,7 +102,8 @@ class SettingsController extends Controller
                 'id' => $section['id'],
                 'type'=> $section['type'],
                 'heading' => $section['name'],
-                'enabled' => true
+                'enabled' => true,
+                'elementCount' => $section['elementCount']
             ];
         }
         $variables = [
