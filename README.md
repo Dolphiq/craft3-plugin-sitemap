@@ -20,7 +20,7 @@ To install the plugin, follow these instructions.
 
         composer require dolphiq/sitemap
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Xml sitemap.
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for XML sitemap.
 
 ## sitemap Roadmap
 Add a Ping for search engines
