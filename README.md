@@ -2,11 +2,11 @@
 
 Craft 3 plugin that provides an easy way to enable and manage a xml sitemap for search engines like Google
 
-![Screenshot](resources/img/plugin-logo.png)
+![Screenshot](resources/screenshots/screenshot1.png)
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+This plugin requires Craft CMS 3.0.0-RC1 or later.
 
 ## Installation
 
@@ -35,9 +35,10 @@ To install the plugin, follow these instructions.
 -Insert text here-
 
 ## sitemap Roadmap
+Add a Ping for search enginges
 
-Some things to do, and ideas for potential features:
 
-* Release it
 
-Brought to you by [Johan Zandstra](https://github.com/Dolphiq/craft3-plugin-sitemap)
+### Contributors & Developers
+Johan Zandstra - info@dolphiq.nl
+Brought to you by [Dolphiq](https://dolphiq.nl)

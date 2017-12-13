@@ -56,6 +56,43 @@ class Sitemap extends Plugin
     // Public Methods
     // =========================================================================
 
+    public $hasCpSection = true;
+    public $hasCpSettings = true;
+
+    // table schema version
+    public $schemaVersion = '1.0.0';
+
+    /**
+     * Return the settings response (if some one clicks on the settings/plugin icon)
+     *
+     */
+
+    public function getSettingsResponse()
+    {
+        $url = \craft\helpers\UrlHelper::cpUrl('settings/sitemap');
+        return \Craft::$app->controller->redirect($url);
+    }
+
+    /**
+     * Register CP URL rules
+     *
+     * @param RegisterUrlRulesEvent $event
+     */
+
+    public function registerCpUrlRules(RegisterUrlRulesEvent $event)
+    {
+        $rules = [
+
+            // register routes for the settings tab
+            'settings/sitemap' => [
+                'route'=>'sitemap/settings',
+                'params'=>['source' => 'CpSettings']],
+            'settings/sitemap/save-sitemap' => [
+                'route'=>'sitemap/settings/save-sitemap',
+                'params'=>['source' => 'CpSettings']],
+        ];
+        $event->rules = array_merge($event->rules, $rules);
+    }
     /**
      * Set our $plugin static property to this class so that it can be accessed via
      * Sitemap::$plugin
@@ -71,22 +108,22 @@ class Sitemap extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+        // only register CP URLs if the user is logged in
+        if (\Craft::$app->user->identity) {
+            // Register our CP routes
+            Event::on(
+                UrlManager::class,
+                UrlManager::EVENT_REGISTER_CP_URL_RULES,
+                [$this, 'registerCpUrlRules']
+            );
+        }
 
         // Register our site routes
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'sitemap/default';
-            }
-        );
-
-        // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['cpActionTrigger1'] = 'sitemap/default/do-something';
+                $event->rules['sitemap.xml'] = 'sitemap/sitemap/index';
             }
         );
 

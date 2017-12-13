@@ -1,6 +1,6 @@
 {
     "name": "dolphiq/sitemap",
-    "description": "Craft 3 plugin that provides an easy way to enable and manage a xml sitemap for search engines like Google",
+    "description": "Craft 3 plugin that provides an easy way to provide and manage a XML sitemap for search engines like Google and Bing",
     "type": "craft-plugin",
     "version": "1.0.0",
     "keywords": [
@@ -10,7 +10,8 @@
         "craft-plugin",
         "sitemap",
         "seo",
-        "sitemap.xml"
+        "sitemap.xml",
+        "webmaster tools"
     ],
     "license": "MIT",
     "authors": [
@@ -21,7 +22,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "~3.0.0-beta.23"
+        "craftcms/cms": "^3.0.0-RC1"
     },
     "repositories": [
         {
@@ -35,18 +36,18 @@
         }
     },
     "extra": {
-        "name": "Sitemap",
+        "name": "XML Sitemap",
         "handle": "sitemap",
         "schemaVersion": "1.0.0",
         "developer": "Dolphiq",
         "developerUrl": "https://dolphiq.nl/",
         "hasCpSettings": true,
-        "hasCpSection": true,
+        "hasCpSection": false,
         "components": {
             "sitemapService": "dolphiq\\sitemap\\services\\SitemapService"
         },
-        "documentationUrl": "https://github.com/Dolphiq/craft3-plugin-redirect/blob/master/README.md",
-        "changelogUrl": "https://raw.githubusercontent.com/Dolphiq/craft3-plugin-redirect/master/CHANGELOG.md",
+        "documentationUrl": "https://github.com/Dolphiq/craft3-plugin-sitemap/blob/master/README.md",
+        "changelogUrl": "https://github.com/Dolphiq/craft3-plugin-sitemap/blob/master/CHANGELOG.md",
 
         "class": "dolphiq\\sitemap\\Sitemap"
     }
