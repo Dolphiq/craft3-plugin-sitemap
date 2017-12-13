@@ -31,8 +31,32 @@ use craft\db\ActiveRecord;
  * @package   Sitemap
  * @since     1.0.0
  */
-class SitemapRecord extends ActiveRecord
+class SitemapEntry extends ActiveRecord
 {
+
+    // Properties
+    // =========================================================================
+
+    /**
+     * @var int|null priority
+     */
+    //public $linkId;
+
+    /**
+     * @var string|null type
+     */
+  //  public $type;
+
+    /**
+     * @var string|null changefreq
+     */
+   // public $changefreq;
+
+    /**
+     * @var double|null priority
+     */
+  //  public $priority;
+
     // Public Static Methods
     // =========================================================================
 
@@ -50,6 +74,6 @@ class SitemapRecord extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%sitemap_sitemaprecord}}';
+        return '{{%dolphiq_sitemap_entries}}';
     }
 }

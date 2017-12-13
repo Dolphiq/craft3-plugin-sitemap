@@ -98,19 +98,21 @@ class Install extends Migration
         $tablesCreated = false;
 
     // sitemap_sitemaprecord table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%sitemap_sitemaprecord}}');
+        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%dolphiq_sitemap_entries}}');
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
-                '{{%sitemap_sitemaprecord}}',
+                '{{%dolphiq_sitemap_entries}}',
                 [
                     'id' => $this->primaryKey(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
                 // Custom columns in the table
-                    'siteId' => $this->integer()->notNull(),
-                    'some_field' => $this->string(255)->notNull()->defaultValue(''),
+                    'linkId' => $this->integer()->notNull(),
+                    'type' => $this->string(30)->notNull()->defaultValue(''),
+                    'priority' => $this->double(2)->notNull()->defaultValue(0.5),
+                    'changefreq' => $this->string(30)->notNull()->defaultValue(''),
                 ]
             );
         }
@@ -128,12 +130,12 @@ class Install extends Migration
     // sitemap_sitemaprecord table
         $this->createIndex(
             $this->db->getIndexName(
-                '{{%sitemap_sitemaprecord}}',
-                'some_field',
+                '{{%dolphiq_sitemap_entries}}',
+                ['type', 'linkId'],
                 true
             ),
-            '{{%sitemap_sitemaprecord}}',
-            'some_field',
+            '{{%dolphiq_sitemap_entries}}',
+            ['type', 'linkId'],
             true
         );
         // Additional commands depending on the db driver
@@ -152,16 +154,7 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-    // sitemap_sitemaprecord table
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%sitemap_sitemaprecord}}', 'siteId'),
-            '{{%sitemap_sitemaprecord}}',
-            'siteId',
-            '{{%sites}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
+
     }
 
     /**
@@ -181,6 +174,6 @@ class Install extends Migration
     protected function removeTables()
     {
     // sitemap_sitemaprecord table
-        $this->dropTableIfExists('{{%sitemap_sitemaprecord}}');
+        $this->dropTableIfExists('{{%dolphiq_sitemap_entries}}');
     }
 }

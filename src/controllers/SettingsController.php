@@ -10,6 +10,8 @@
 
 namespace dolphiq\sitemap\controllers;
 
+use dolphiq\sitemap\models\SitemapEntryModel;
+use dolphiq\sitemap\records\SitemapEntry;
 use dolphiq\sitemap\Sitemap;
 
 use Craft;
@@ -61,12 +63,16 @@ class SettingsController extends Controller
             'sections.enableVersioning',
             'structures.maxLevels',
             'count(DISTINCT entries.id) entryCount',
-            'count(DISTINCT elements.id) elementCount'
+            'count(DISTINCT elements.id) elementCount',
+            'sitemap_entries.id sitemapEntryId',
+            'sitemap_entries.changefreq changefreq',
+            'sitemap_entries.priority priority',
         ])
             ->leftJoin('{{%structures}} structures', '[[structures.id]] = [[sections.structureId]]')
             ->innerJoin('{{%sections_sites}} sections_sites', '[[sections_sites.sectionId]] = [[sections.id]] AND [[sections_sites.hasUrls]] = 1')
             ->leftJoin('{{%entries}} entries', '[[sections.id]] = [[entries.sectionId]]')
             ->leftJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
+            ->leftJoin('{{%dolphiq_sitemap_entries}} sitemap_entries', '[[sections.id]] = [[sitemap_entries.linkId]] AND [[sitemap_entries.type]] = "section"')
         ->from(['{{%sections}} sections'])
 
             ->from(['{{%sections}} sections'])
@@ -102,8 +108,10 @@ class SettingsController extends Controller
                 'id' => $section['id'],
                 'type'=> $section['type'],
                 'heading' => $section['name'],
-                'enabled' => true,
-                'elementCount' => $section['elementCount']
+                'enabled' => ($section['sitemapEntryId']>0 ? true : false ),
+                'elementCount' => $section['elementCount'],
+                'changefreq' => ($section['sitemapEntryId']>0 ? $section['changefreq'] : 'weekly' ),
+                'priority' => ($section['sitemapEntryId']>0 ? $section['priority'] : 0.5 ),
             ];
         }
         $variables = [
@@ -127,6 +135,40 @@ class SettingsController extends Controller
         $this->requirePostRequest();
         $this->requireAdmin();
         $request = Craft::$app->getRequest();
+        // @TODO: check the input and save the sections
+        $sitemapSections = $request->getBodyParam('sitemapSections');
+        // filter the enabled sections
+        $allSectionIds = [];
+        foreach($sitemapSections as $key => $entry) {
+            if($entry['enabled']) {
+                // filter section id from key
+
+                $id = (int) str_replace('id:', '', $key);
+                if($id > 0) {
+                    // find the entry, else add one
+                    $sitemapEntry = SitemapEntry::find()->where(['linkId' => $id, 'type' => 'section'])->one();
+                    if(!$sitemapEntry) {
+                        // insert / update this section
+                        $sitemapEntry = new SitemapEntry();
+                    }
+                    $sitemapEntry->linkId = $id;
+                    $sitemapEntry->type = 'section';
+                    $sitemapEntry->priority = $entry['priority'];
+                    $sitemapEntry->changefreq = $entry['changefreq'];
+                    $sitemapEntry->save();
+                    array_push($allSectionIds, $id);
+                }
+            }
+        }
+        // remove all sitemaps not in the id list
+        if(count($allSectionIds) == 0) {
+            SitemapEntry::deleteAll(['type' => 'section']);
+        } else {
+            foreach (SitemapEntry::find()->where(['type' => 'section'])->andWhere(['NOT IN','linkId',$allSectionIds])->all() as $entry) {
+                $entry->delete();
+            }
+        }
+        return $this->actionIndex();
 
     }
 

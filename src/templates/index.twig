@@ -39,24 +39,24 @@
 
     {{ redirectInput('settings/sitemap') }}
 
-    {% set sitemapRows = [] %}
+    {% set sitemapSectionsRows = [] %}
 
     {% if allStructures|length %}
         {% for section in allStructures %}
 
 
-            {% set sitemapRows = sitemapRows|merge({
-                ('section:' ~ section.id): {
+            {% set sitemapSectionsRows = sitemapSectionsRows|merge({
+                ('id:' ~ section.id): {
                 heading: section.heading,
                 type: section.type,
                 enabled: include('_includes/forms/lightswitch', {
-                name: 'sitemaps[section:'~section.id~'][enabled]',
+                name: 'sitemapSections[id:'~section.id~'][enabled]',
                 on: section.enabled,
                 value: 1,
                 small: true
                 }),
-                priority: 0.5,
-                changefreq : 'monthly',
+                priority: section.priority,
+                changefreq : section.changefreq,
                 entries : section.elementCount
                 }
             }) %}
@@ -68,10 +68,10 @@
 
 
     {{ forms.editableTableField({
-        label: "Sitemap Settings"|t('app'),
+        label: "Enable structures"|t('app'),
         instructions: "Choose which entry sections should be listed in the sitemap, and configure the crawl settings. <b>Note: the sections should have url's to get listed here </b>"|t('app'),
-        id: 'sitemaps',
-        name: 'sitemaps',
+        id: 'sitemapSections',
+        name: 'sitemapSections',
         cols: {
             heading: {
                 type: 'heading',
@@ -131,7 +131,7 @@ Please note that the priority you assign to a page is not likely to influence th
                 type: 'heading',
             }
         },
-        rows: sitemapRows,
+        rows: sitemapSectionsRows,
         staticRows: true,
         errors: sitemapErrors|unique
     }) }}
@@ -139,14 +139,14 @@ Please note that the priority you assign to a page is not likely to influence th
 
 {% js %}
 
-var $sitemapRows = $('#sitemaps').children('tbody').children(),
+var $sitemapRows = $('#sitemapSections').children('tbody').children(),
 $lightswitches = $sitemapRows.children('th:nth-child(2)').children('.lightswitch');
 
 
 console.log($lightswitches);
 
-function updateSitemaps() {
-    console.log('updateSitemaps');
+function updateSitemapSections() {
+    console.log('updateSitemapSections');
     $lightswitches.each(function() {
         if ($(this).data('lightswitch').on) {
             $(this).parent().nextAll('td').removeClass('disabled').find('textarea,div.lightswitch,input').attr('tabindex', '0');
@@ -156,10 +156,10 @@ function updateSitemaps() {
     });
 }
 
-$lightswitches.on('change', updateSitemaps);
+$lightswitches.on('change', updateSitemapSections);
 
 Garnish.$doc.ready(function() {
-    updateSitemaps();
+    updateSitemapSections();
 });
 
 

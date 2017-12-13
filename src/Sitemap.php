@@ -117,17 +117,16 @@ class Sitemap extends Plugin
                 [$this, 'registerCpUrlRules']
             );
         }
- /*     // Register our site routes
+
+        // Register our site routes
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'sitemap/default';
+                $event->rules['sitemap.xml'] = 'sitemap/sitemap/index';
             }
         );
 
-
-*/
         // Do something after we're installed
         Event::on(
             Plugins::class,
