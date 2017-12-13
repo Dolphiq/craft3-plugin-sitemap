@@ -1,4 +1,4 @@
-# sitemap plugin for Craft CMS 3.x
+# Xml Sitemap plugin for Craft CMS 3.x
 
 Craft 3 plugin that provides an easy way to enable and manage a xml sitemap for search engines like Google
 
@@ -18,26 +18,12 @@ To install the plugin, follow these instructions.
 
 2. Then tell Composer to load the plugin:
 
-        composer require /sitemap
+        composer require dolphiq/sitemap
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for sitemap.
-
-## sitemap Overview
-
--Insert text here-
-
-## Configuring sitemap
-
--Insert text here-
-
-## Using sitemap
-
--Insert text here-
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Xml sitemap.
 
 ## sitemap Roadmap
-Add a Ping for search enginges
-
-
+Add a Ping for search engines
 
 ### Contributors & Developers
 Johan Zandstra - info@dolphiq.nl
