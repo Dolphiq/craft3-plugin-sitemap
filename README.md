@@ -1,6 +1,6 @@
 # Xml Sitemap plugin for Craft CMS 3.x
 
-Craft 3 plugin that provides an easy way to enable and manage a xml sitemap for search engines like Google
+Craft 3 plugin that provides an easy way to enable and manage an XML sitemap for search engines like Google
 
 ![Screenshot](resources/screenshots/screenshot1.png)
 
