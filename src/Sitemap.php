@@ -10,7 +10,6 @@
 
 namespace dolphiq\sitemap;
 
-use dolphiq\sitemap\services\SitemapService as SitemapServiceService;
 use dolphiq\sitemap\models\Settings;
 
 use Craft;
