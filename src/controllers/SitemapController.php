@@ -40,7 +40,8 @@ use craft\web\Controller;
  */
 class SitemapController extends Controller
 {
-
+    private $_sourceRouteParams = [];
+    protected $allowAnonymous = ['index'];
     // Public Methods
 // =========================================================================
 
