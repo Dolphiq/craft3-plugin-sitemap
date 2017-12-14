@@ -1,8 +1,15 @@
-# Xml Sitemap plugin for Craft CMS 3.x
+# XML-sitemap plugin for Craft CMS 3.x
 
-Craft 3 plugin that provides an easy way to enable and manage an XML sitemap for search engines like Google
+Craft 3 plugin that provides an easy way to enable and manage a XML sitemap for search engines like Google and Bing
 
 ![Screenshot](resources/screenshots/screenshot1.png)
+
+## Using the XML-sitemap plugin
+
+After the installation, you can find the plugin in the settings section of the Control Panel.
+You can enable and set the settings per entries section.
+
+After saving the desired settings, you can submit the xml url (your site url)/sitemap.xml to the searchengines.
 
 ## Requirements
 
@@ -23,7 +30,10 @@ To install the plugin, follow these instructions.
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for XML sitemap.
 
 ## sitemap Roadmap
+User (custom) url entry section
+Privide a way hide entries from the list
 Add a Ping for search engines
+
 
 ### Contributors & Developers
 Johan Zandstra - info@dolphiq.nl
