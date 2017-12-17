@@ -115,6 +115,16 @@ class Install extends Migration
                     'changefreq' => $this->string(30)->notNull()->defaultValue(''),
                 ]
             );
+            $this->createTable(
+                '{{%dolphiq_sitemap_crawler_visits}}',
+                [
+                    'id' => $this->primaryKey(),
+                    'dateCreated' => $this->dateTime()->notNull(),
+                    'dateUpdated' => $this->dateTime()->notNull(),
+                    'uid' => $this->uid(),
+                    'name' => $this->string(150)->notNull()->defaultValue(''),
+                ]
+            );
         }
 
         return $tablesCreated;

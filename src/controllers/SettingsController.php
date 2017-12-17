@@ -60,26 +60,43 @@ class SettingsController extends Controller
             'sections.name',
             'sections.handle',
             'sections.type',
-            'sections.enableVersioning',
-            'structures.maxLevels',
             'count(DISTINCT entries.id) entryCount',
             'count(DISTINCT elements.id) elementCount',
             'sitemap_entries.id sitemapEntryId',
             'sitemap_entries.changefreq changefreq',
             'sitemap_entries.priority priority',
-        ])
+        ])->from(['{{%sections}} sections'])
             ->leftJoin('{{%structures}} structures', '[[structures.id]] = [[sections.structureId]]')
             ->innerJoin('{{%sections_sites}} sections_sites', '[[sections_sites.sectionId]] = [[sections.id]] AND [[sections_sites.hasUrls]] = 1')
             ->leftJoin('{{%entries}} entries', '[[sections.id]] = [[entries.sectionId]]')
             ->leftJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
             ->leftJoin('{{%dolphiq_sitemap_entries}} sitemap_entries', '[[sections.id]] = [[sitemap_entries.linkId]] AND [[sitemap_entries.type]] = "section"')
-        ->from(['{{%sections}} sections'])
 
-            ->from(['{{%sections}} sections'])
             ->groupBy(['sections.id'])
         ->orderBy(['type' => SORT_ASC],['name' => SORT_ASC]);
     }
 
+    private function _createCategoryQuery(): Query
+    {
+        return (new Query())
+            ->select([
+                'categorygroups.id',
+                'categorygroups.name',
+                'count(DISTINCT entries.id) entryCount',
+                'count(DISTINCT elements.id) elementCount',
+                'sitemap_entries.id sitemapEntryId',
+                'sitemap_entries.changefreq changefreq',
+                'sitemap_entries.priority priority',
+            ])
+            ->from(['{{%categories}} categories'])
+            ->innerJoin('{{%categorygroups}} categorygroups', '[[categories.groupId]] = [[categorygroups.id]]')
+            ->innerJoin('{{%categorygroups_sites}} categorygroups_sites', '[[categorygroups_sites.groupId]] = [[categorygroups.id]] AND [[categorygroups_sites.hasUrls]] = 1')
+            ->leftJoin('{{%entries}} entries', '[[categories.id]] = [[entries.sectionId]]')
+            ->leftJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
+            ->leftJoin('{{%dolphiq_sitemap_entries}} sitemap_entries', '[[categorygroups.id]] = [[sitemap_entries.linkId]] AND [[sitemap_entries.type]] = "category"')
+            ->groupBy(['categorygroups.id'])
+            ->orderBy(['name' => SORT_ASC]);
+    }
 
 // Public Methods
 // =========================================================================
@@ -114,11 +131,28 @@ class SettingsController extends Controller
                 'priority' => ($section['sitemapEntryId']>0 ? $section['priority'] : 0.5 ),
             ];
         }
+
+        $allCategories = $this->_createCategoryQuery()->all();
+        $allCategoryStructures = [];
+        // print_r($allSections);
+        foreach($allCategories as $category) {
+            $allCategoryStructures[] = [
+                'id' => $category['id'],
+                'type'=> 'category',
+                'heading' => $category['name'],
+                'enabled' => ($category['sitemapEntryId']>0 ? true : false ),
+                'elementCount' => $category['elementCount'],
+                'changefreq' => ($category['sitemapEntryId']>0 ? $category['changefreq'] : 'weekly' ),
+                'priority' => ($category['sitemapEntryId']>0 ? $category['priority'] : 0.5 ),
+            ];
+        }
+
         $variables = [
             'settings' => Sitemap::$plugin->getSettings(),
             'source' => $source,
             'pathPrefix' => ($source == 'CpSettings' ? 'settings/': ''),
-            'allStructures' => $allStructures
+            'allStructures' => $allStructures,
+            'allCategories' => $allCategoryStructures
             // 'allRedirects' => $allRedirects
         ];
 
@@ -165,6 +199,40 @@ class SettingsController extends Controller
             SitemapEntry::deleteAll(['type' => 'section']);
         } else {
             foreach (SitemapEntry::find()->where(['type' => 'section'])->andWhere(['NOT IN','linkId',$allSectionIds])->all() as $entry) {
+                $entry->delete();
+            }
+        }
+
+        // now save the sitemapCategories
+        $sitemapCategories = $request->getBodyParam('sitemapCategories');
+        // filter the enabled sections
+        $allCategoryIds = [];
+        foreach($sitemapCategories as $key => $entry) {
+            if($entry['enabled']) {
+                // filter section id from key
+
+                $id = (int) str_replace('id:', '', $key);
+                if($id > 0) {
+                    // find the entry, else add one
+                    $sitemapEntry = SitemapEntry::find()->where(['linkId' => $id, 'type' => 'category'])->one();
+                    if(!$sitemapEntry) {
+                        // insert / update this section
+                        $sitemapEntry = new SitemapEntry();
+                    }
+                    $sitemapEntry->linkId = $id;
+                    $sitemapEntry->type = 'category';
+                    $sitemapEntry->priority = $entry['priority'];
+                    $sitemapEntry->changefreq = $entry['changefreq'];
+                    $sitemapEntry->save();
+                    array_push($allCategoryIds, $id);
+                }
+            }
+        }
+        // remove all sitemaps not in the id list
+        if(count($allCategoryIds) == 0) {
+            SitemapEntry::deleteAll(['type' => 'category']);
+        } else {
+            foreach (SitemapEntry::find()->where(['type' => 'category'])->andWhere(['NOT IN','linkId',$allCategoryIds])->all() as $entry) {
                 $entry->delete();
             }
         }
