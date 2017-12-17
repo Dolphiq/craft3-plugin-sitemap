@@ -32,19 +32,13 @@ To install the plugin, follow these instructions.
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for XML sitemap.
 
-<<<<<<< HEAD
-## sitemap Roadmap
-Custom url entry section in the plugin settings
-Privide a way hide entries from the list
-Add a Ping for search engines to auto-submit the xml
-=======
+
 ## XML-sitemap Roadmap
 - User (custom) url entry section
 - Add enable Category selection
 - Privide a way hide entries from the list
 - Add a Ping for search engines
 - Register the last visit per search engine and display this
->>>>>>> Add categories in sitemap, migrations
 
 
 ### Contributors & Developers
