@@ -1,8 +1,10 @@
 # sitemap Changelog
 
-## 1.0.2 - 2017-12-15
+## 1.0.4 - 2017-12-18
 ### Added
 - Added <lastmod> column to the XML
+- Added category section to include in sitemap
+- Register crawler visits
 
 ### Changed
 - Changed the documentation

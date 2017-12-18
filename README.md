@@ -7,7 +7,7 @@ Craft 3 plugin that provides an easy way to enable and manage a XML sitemap for 
 ## Using the XML-sitemap plugin
 
 After the installation, you can find the plugin in the settings section of the Control Panel.
-You can enable and set the settings per entries section.
+You can enable and set the settings per entries section and enable categories in the sitemap.
 
 After saving the desired settings, you can submit the xml url (your site url)/sitemap.xml to the searchengines.
 
@@ -35,10 +35,9 @@ To install the plugin, follow these instructions.
 
 ## XML-sitemap Roadmap
 - User (custom) url entry section
-- Add enable Category selection
 - Privide a way hide entries from the list
 - Add a Ping for search engines
-- Register the last visit per search engine and display this
+- Display the last 20 visits from search engines
 
 
 ### Contributors & Developers
