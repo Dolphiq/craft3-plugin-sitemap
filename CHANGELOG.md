@@ -1,5 +1,9 @@
 # sitemap Changelog
 
+## 1.0.5 - 2017-12-18
+### Fixed
+- Fixed bug if there are no sections or categories in the website
+
 ## 1.0.4 - 2017-12-18
 ### Added
 - Added <lastmod> column to the XML
