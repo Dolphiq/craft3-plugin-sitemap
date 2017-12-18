@@ -119,34 +119,37 @@ class SettingsController extends Controller
         // $allSections = Craft::$app->getSections()->getAllSections();
         $allSections = $this->_createEntrySectionQuery()->all();
         $allStructures = [];
-        // print_r($allSections);
-        foreach($allSections as $section) {
-            $allStructures[] = [
-                'id' => $section['id'],
-                'type'=> $section['type'],
-                'heading' => $section['name'],
-                'enabled' => ($section['sitemapEntryId']>0 ? true : false ),
-                'elementCount' => $section['elementCount'],
-                'changefreq' => ($section['sitemapEntryId']>0 ? $section['changefreq'] : 'weekly' ),
-                'priority' => ($section['sitemapEntryId']>0 ? $section['priority'] : 0.5 ),
-            ];
+
+        if (is_array($allSections)) {
+            foreach ($allSections as $section) {
+                $allStructures[] = [
+                    'id' => $section['id'],
+                    'type' => $section['type'],
+                    'heading' => $section['name'],
+                    'enabled' => ($section['sitemapEntryId'] > 0 ? true : false),
+                    'elementCount' => $section['elementCount'],
+                    'changefreq' => ($section['sitemapEntryId'] > 0 ? $section['changefreq'] : 'weekly'),
+                    'priority' => ($section['sitemapEntryId'] > 0 ? $section['priority'] : 0.5),
+                ];
+            }
         }
 
         $allCategories = $this->_createCategoryQuery()->all();
         $allCategoryStructures = [];
-        // print_r($allSections);
-        foreach($allCategories as $category) {
-            $allCategoryStructures[] = [
-                'id' => $category['id'],
-                'type'=> 'category',
-                'heading' => $category['name'],
-                'enabled' => ($category['sitemapEntryId']>0 ? true : false ),
-                'elementCount' => $category['elementCount'],
-                'changefreq' => ($category['sitemapEntryId']>0 ? $category['changefreq'] : 'weekly' ),
-                'priority' => ($category['sitemapEntryId']>0 ? $category['priority'] : 0.5 ),
-            ];
+        if (is_array($allCategories)) {
+            // print_r($allSections);
+            foreach ($allCategories as $category) {
+                $allCategoryStructures[] = [
+                    'id' => $category['id'],
+                    'type' => 'category',
+                    'heading' => $category['name'],
+                    'enabled' => ($category['sitemapEntryId'] > 0 ? true : false),
+                    'elementCount' => $category['elementCount'],
+                    'changefreq' => ($category['sitemapEntryId'] > 0 ? $category['changefreq'] : 'weekly'),
+                    'priority' => ($category['sitemapEntryId'] > 0 ? $category['priority'] : 0.5),
+                ];
+            }
         }
-
         $variables = [
             'settings' => Sitemap::$plugin->getSettings(),
             'source' => $source,
@@ -173,24 +176,26 @@ class SettingsController extends Controller
         $sitemapSections = $request->getBodyParam('sitemapSections');
         // filter the enabled sections
         $allSectionIds = [];
-        foreach($sitemapSections as $key => $entry) {
-            if($entry['enabled']) {
-                // filter section id from key
+        if (is_array($sitemapSections)) {
+            foreach ($sitemapSections as $key => $entry) {
+                if ($entry['enabled']) {
+                    // filter section id from key
 
-                $id = (int) str_replace('id:', '', $key);
-                if($id > 0) {
-                    // find the entry, else add one
-                    $sitemapEntry = SitemapEntry::find()->where(['linkId' => $id, 'type' => 'section'])->one();
-                    if(!$sitemapEntry) {
-                        // insert / update this section
-                        $sitemapEntry = new SitemapEntry();
+                    $id = (int)str_replace('id:', '', $key);
+                    if ($id > 0) {
+                        // find the entry, else add one
+                        $sitemapEntry = SitemapEntry::find()->where(['linkId' => $id, 'type' => 'section'])->one();
+                        if (!$sitemapEntry) {
+                            // insert / update this section
+                            $sitemapEntry = new SitemapEntry();
+                        }
+                        $sitemapEntry->linkId = $id;
+                        $sitemapEntry->type = 'section';
+                        $sitemapEntry->priority = $entry['priority'];
+                        $sitemapEntry->changefreq = $entry['changefreq'];
+                        $sitemapEntry->save();
+                        array_push($allSectionIds, $id);
                     }
-                    $sitemapEntry->linkId = $id;
-                    $sitemapEntry->type = 'section';
-                    $sitemapEntry->priority = $entry['priority'];
-                    $sitemapEntry->changefreq = $entry['changefreq'];
-                    $sitemapEntry->save();
-                    array_push($allSectionIds, $id);
                 }
             }
         }
@@ -207,24 +212,26 @@ class SettingsController extends Controller
         $sitemapCategories = $request->getBodyParam('sitemapCategories');
         // filter the enabled sections
         $allCategoryIds = [];
-        foreach($sitemapCategories as $key => $entry) {
-            if($entry['enabled']) {
-                // filter section id from key
+        if (is_array($sitemapCategories)) {
+            foreach ($sitemapCategories as $key => $entry) {
+                if ($entry['enabled']) {
+                    // filter section id from key
 
-                $id = (int) str_replace('id:', '', $key);
-                if($id > 0) {
-                    // find the entry, else add one
-                    $sitemapEntry = SitemapEntry::find()->where(['linkId' => $id, 'type' => 'category'])->one();
-                    if(!$sitemapEntry) {
-                        // insert / update this section
-                        $sitemapEntry = new SitemapEntry();
+                    $id = (int)str_replace('id:', '', $key);
+                    if ($id > 0) {
+                        // find the entry, else add one
+                        $sitemapEntry = SitemapEntry::find()->where(['linkId' => $id, 'type' => 'category'])->one();
+                        if (!$sitemapEntry) {
+                            // insert / update this section
+                            $sitemapEntry = new SitemapEntry();
+                        }
+                        $sitemapEntry->linkId = $id;
+                        $sitemapEntry->type = 'category';
+                        $sitemapEntry->priority = $entry['priority'];
+                        $sitemapEntry->changefreq = $entry['changefreq'];
+                        $sitemapEntry->save();
+                        array_push($allCategoryIds, $id);
                     }
-                    $sitemapEntry->linkId = $id;
-                    $sitemapEntry->type = 'category';
-                    $sitemapEntry->priority = $entry['priority'];
-                    $sitemapEntry->changefreq = $entry['changefreq'];
-                    $sitemapEntry->save();
-                    array_push($allCategoryIds, $id);
                 }
             }
         }
