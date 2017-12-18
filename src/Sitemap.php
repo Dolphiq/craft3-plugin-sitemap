@@ -59,7 +59,7 @@ class Sitemap extends Plugin
     public $hasCpSettings = true;
 
     // table schema version
-    public $schemaVersion = '1.0.1';
+    public $schemaVersion = '1.0.2';
 
     /**
      * Return the settings response (if some one clicks on the settings/plugin icon)

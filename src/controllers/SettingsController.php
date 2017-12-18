@@ -156,7 +156,7 @@ class SettingsController extends Controller
             // 'allRedirects' => $allRedirects
         ];
 
-        return $this->renderTemplate('sitemap/index', $variables);
+        return $this->renderTemplate('sitemap/settings', $variables);
     }
 
     /**
@@ -240,16 +240,4 @@ class SettingsController extends Controller
 
     }
 
-    /**
-     * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/sitemap/default/do-something
-     *
-     * @return mixed
-     */
-    public function actionDoSomething()
-    {
-        $result = 'Welcome to the DefaultController actionDoSomething() method';
-
-        return $result;
-    }
 }

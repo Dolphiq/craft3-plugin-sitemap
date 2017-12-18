@@ -36,7 +36,7 @@ class m171217_220906_c_crawler_visit_table extends Migration
      */
     public function safeDown()
     {
-        echo "m171217_220906_c_crawler_visit_table cannot be reverted.\n";
-        return false;
+        $this->dropTableIfExists('{{%dolphiq_sitemap_crawler_visits}}');
+        return true;
     }
 }

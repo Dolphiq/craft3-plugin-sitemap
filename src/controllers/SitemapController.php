@@ -56,41 +56,13 @@ class SitemapController extends Controller
      */
     public function actionIndex()
     {
-/*
-        $response = Craft::$app->response;
-
-        $xml = new \yii\web\XmlResponseFormatter;
-        $xml->rootTag = 'urlset';
-        $xml->itemTag = 'url';
-        $xml->encoding = 'UTF-8';
-        $xml->version = '1.0';
-        $xml->useObjectTags = false;
-
-        $response->format = 'sitemap_xml';
-        $response->formatters['sitemap_xml'] = $xml;
-
-// get all the urls!
-        // $entries = SitemapEntry::find()->all();
-        $urlItems = [];
-
-        foreach($this->_createEntrySectionQuery()->all() as $item) {
-            $urlItems[] = $item;
-        }
-        $response = $urlItems;
-
-*/
-        //set content type xml in response
 
         try {
             // try to register the searchengine visit
-
-
             $CrawlerDetect = new CrawlerDetect;
 
             // Check the user agent of the current 'visitor'
-            if(ungit$CrawlerDetect->isCrawler()) {
-                // true if crawler user agent detected
-                // echo $CrawlerDetect->getMatches();
+            if($CrawlerDetect->isCrawler()) {
                 // insert into table!
                 $visit = new SitemapCrawlerVisit();
                 $visit->name = $CrawlerDetect->getMatches();
