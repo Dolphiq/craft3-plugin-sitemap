@@ -82,10 +82,14 @@ class SitemapController extends Controller
         $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $dom->appendChild($urlset);
 
+        $siteurl = isset(Craft::$app->config->general)
+                && isset(Craft::$app->config->general->siteUrl)
+            ? Craft::$app->config->general->siteUrl
+            : null;
 
         foreach($this->_createEntrySectionQuery()->all() as $item) {
-
-            $loc = rtrim($item['baseurl'], '/ ') . '/' . ($item['uri'] === '__home__' ? '' : $item['uri']);
+            $baseurl = rtrim($siteurl ?: $item['baseurl'], '/') . '/';
+            $loc = $baseurl . ($item['uri'] === '__home__' ? '' : $item['uri']);
 
             $url = $dom->createElement('url');
             $urlset->appendChild($url);
@@ -98,8 +102,8 @@ class SitemapController extends Controller
         }
 
         foreach($this->_createEntryCategoryQuery()->all() as $item) {
-
-            $loc = rtrim($item['baseurl'], '/ ') . '/' . ($item['uri'] === '__home__' ? '' : $item['uri']);
+            $baseurl = rtrim($siteurl ?: $item['baseurl'], '/') . '/';
+            $loc = $baseurl . ($item['uri'] === '__home__' ? '' : $item['uri']);
 
             $url = $dom->createElement('url');
             $urlset->appendChild($url);
