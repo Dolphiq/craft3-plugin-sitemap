@@ -34,6 +34,7 @@ To install the plugin, follow these instructions.
 
 
 ## XML-sitemap Roadmap
+- Settings to enable /disable and split the entries in the xml on a site basis (for multi site setup)
 - User (custom) url entry section
 - Provide a way hide entries from the list
 - Add a Ping for search engines
