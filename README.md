@@ -16,7 +16,7 @@ The sitemap is compatible with the ![sitemaps.org](https://www.sitemaps.org/prot
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-RC1 or later.
+This plugin requires Craft CMS 3.0.0-RC6 or later.
 
 ## Installation
 
@@ -35,7 +35,7 @@ To install the plugin, follow these instructions.
 
 ## XML-sitemap Roadmap
 - User (custom) url entry section
-- Privide a way hide entries from the list
+- Provide a way hide entries from the list
 - Add a Ping for search engines
 - Display the last 20 visits from search engines
 
