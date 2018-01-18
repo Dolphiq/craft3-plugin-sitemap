@@ -18,6 +18,7 @@ use dolphiq\sitemap\Sitemap;
 use Craft;
 use craft\db\Query;
 use craft\web\Controller;
+use craft\helpers\UrlHelper;
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
@@ -47,6 +48,20 @@ class SitemapController extends Controller
     protected $allowAnonymous = ['index'];
     // Public Methods
 // =========================================================================
+
+
+    /**
+     * @inheritdoc
+     */
+    private function getUrl($uri, $siteId)
+    {
+        if ($uri !== null) {
+            $path = ($uri === '__home__') ? '' : $uri;
+            return UrlHelper::siteUrl($path, null, null, $siteId);
+        }
+
+        return null;
+    }
 
     /**
      * Handle a request going to our plugin's index action URL,
@@ -82,15 +97,10 @@ class SitemapController extends Controller
         $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
         $dom->appendChild($urlset);
 
-        $siteurl = isset(Craft::$app->config->general)
-                && isset(Craft::$app->config->general->siteUrl)
-            ? Craft::$app->config->general->siteUrl
-            : null;
-
         foreach($this->_createEntrySectionQuery()->all() as $item) {
-            $baseurl = rtrim($siteurl ?: $item['baseurl'], '/') . '/';
-            $loc = $baseurl . ($item['uri'] === '__home__' ? '' : $item['uri']);
-
+            $loc = $this->getUrl($item['uri'], $item['siteId']);
+            if($loc === null) continue;
+            
             $url = $dom->createElement('url');
             $urlset->appendChild($url);
             $url->appendChild($dom->createElement('loc', $loc));
@@ -102,8 +112,8 @@ class SitemapController extends Controller
         }
 
         foreach($this->_createEntryCategoryQuery()->all() as $item) {
-            $baseurl = rtrim($siteurl ?: $item['baseurl'], '/') . '/';
-            $loc = $baseurl . ($item['uri'] === '__home__' ? '' : $item['uri']);
+            $loc = $this->getUrl($item['uri'], $item['siteId']);
+            if($loc === null) continue;
 
             $url = $dom->createElement('url');
             $urlset->appendChild($url);
@@ -124,7 +134,7 @@ class SitemapController extends Controller
                 'elements_sites.uri uri',
                 'elements_sites.dateUpdated dateUpdated',
                 'sites.baseurl',
-
+                'elements_sites.siteId',
                 'sitemap_entries.id sitemapEntryId',
                 'sitemap_entries.changefreq changefreq',
                 'sitemap_entries.priority priority',
@@ -149,7 +159,7 @@ class SitemapController extends Controller
                 'elements_sites.uri uri',
                 'elements_sites.dateUpdated dateUpdated',
                 'sites.baseurl',
-
+                'elements_sites.siteId',
                 'sitemap_entries.id sitemapEntryId',
                 'sitemap_entries.changefreq changefreq',
                 'sitemap_entries.priority priority',
@@ -160,10 +170,8 @@ class SitemapController extends Controller
             ->innerJoin('{{%elements}} elements', '[[elements.id]] = [[categories.id]] AND [[elements.enabled]] = 1')
             ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
             ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
-
             ->groupBy(['elements_sites.id']);
     }
-
 
 }
 
