@@ -133,9 +133,7 @@ class SitemapController extends Controller
             ->select([
                 'elements_sites.uri uri',
                 'elements_sites.dateUpdated dateUpdated',
-                'sites.baseurl',
                 'elements_sites.siteId',
-                'sitemap_entries.id sitemapEntryId',
                 'sitemap_entries.changefreq changefreq',
                 'sitemap_entries.priority priority',
             ])
@@ -158,9 +156,7 @@ class SitemapController extends Controller
 
                 'elements_sites.uri uri',
                 'elements_sites.dateUpdated dateUpdated',
-                'sites.baseurl',
                 'elements_sites.siteId',
-                'sitemap_entries.id sitemapEntryId',
                 'sitemap_entries.changefreq changefreq',
                 'sitemap_entries.priority priority',
             ])
