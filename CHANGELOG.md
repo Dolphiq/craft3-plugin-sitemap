@@ -1,4 +1,11 @@
 # sitemap Changelog
+## 1.0.7 - 2018-01-18
+
+### Fixed
+- Fixed bug with multi-site setup configured in de config files
+
+### Changed
+- Make more use of the Craft framework for future compatibility
 
 ## 1.0.6 - 2018-01-18
 ### Changed
