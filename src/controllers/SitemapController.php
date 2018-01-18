@@ -84,6 +84,7 @@ class SitemapController extends Controller
 
         $siteurl = isset(Craft::$app->config->general)
                 && isset(Craft::$app->config->general->siteUrl)
+                && gettype(Craft::$app->config->general->siteUrl) === 'string'
             ? Craft::$app->config->general->siteUrl
             : null;
 
