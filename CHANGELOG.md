@@ -1,5 +1,10 @@
 # sitemap Changelog
 
+## 1.0.6 - 2018-01-18
+### Changed
+- Use the siteUrl from the general config as prefered base URL
+- Checked compatibility with Craft RC6
+
 ## 1.0.5 - 2017-12-18
 ### Fixed
 - Fixed bug if there are no sections or categories in the website
