@@ -16,7 +16,7 @@ The sitemap is compatible with the ![sitemaps.org](https://www.sitemaps.org/prot
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-RC6 or later.
+This plugin requires Craft CMS 3.0.0-RC11 or later.
 
 ## Installation
 
