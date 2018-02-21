@@ -80,6 +80,10 @@ class Sitemap extends Plugin
 
     public function registerCpUrlRules(RegisterUrlRulesEvent $event)
     {
+        // only register CP URLs if the user is logged in
+        if (!\Craft::$app->user->identity)
+            return;
+        
         $rules = [
 
             // register routes for the settings tab
@@ -107,8 +111,12 @@ class Sitemap extends Plugin
     {
         parent::init();
         self::$plugin = $this;
+<<<<<<< HEAD
 
 
+=======
+        
+>>>>>>> origin/master
         // Register our CP routes
         Event::on(
             UrlManager::class,
