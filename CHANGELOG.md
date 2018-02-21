@@ -1,5 +1,9 @@
 # sitemap Changelog
 
+## 1.0.9 - 2018-02-21
+### Added
+- Added support for alternate language support for Google for multi language websites
+
 ## 1.0.8 - 2018-02-21
 ### Fixed
 - Fixed a bug causing the settings routes and section not available in with Craft CMS 3.0.0-RC11

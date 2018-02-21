@@ -93,8 +93,12 @@ class SitemapController extends Controller
         $dom = new \DOMDocument('1.0','UTF-8');
         $dom->formatOutput = true;
 
-        $urlset = $dom->createElement('urlset');
-        $urlset->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        $urlset = $dom->createElementNS('http://www.sitemaps.org/schemas/sitemap/0.9', 'urlset');
+        $urlset->setAttributeNS(
+            'http://www.w3.org/2000/xmlns/',
+            'xmlns:xhtml',
+            'http://www.w3.org/1999/xhtml'
+        );
         $dom->appendChild($urlset);
 
         foreach($this->_createEntrySectionQuery()->all() as $item) {
@@ -108,7 +112,21 @@ class SitemapController extends Controller
             $url->appendChild($dom->createElement('changefreq', $item['changefreq']));
             $dateUpdated = strtotime($item['dateUpdated']);
             $url->appendChild($dom->createElement('lastmod', date('Y-m-d\TH:i:sP', $dateUpdated)));
+            if ($item['alternateLinkCount'] > 1) {
+                $alternateLinks = $this->_createAlternateSectionQuery($item['elementId'])->all();
+                if (count($alternateLinks) > 0) {
+                    foreach ($alternateLinks as $alternateItem) {
+                        $alternateLoc = $this->getUrl($alternateItem['uri'], $alternateItem['siteId']);
+                        if ($alternateLoc === null) continue;
 
+                        $alternateLink = $dom->createElementNS('http://www.w3.org/1999/xhtml', 'xhtml:link');
+                        $alternateLink->setAttribute('rel', 'alternate');
+                        $alternateLink->setAttribute('hreflang', strtolower($alternateItem['siteLanguate']));
+                        $alternateLink->setAttribute('href', $alternateLoc);
+                        $url->appendChild($alternateLink);
+                    }
+                }
+            }
         }
 
         foreach($this->_createEntryCategoryQuery()->all() as $item) {
@@ -123,12 +141,19 @@ class SitemapController extends Controller
             $dateUpdated = strtotime($item['dateUpdated']);
             $url->appendChild($dom->createElement('lastmod', date('Y-m-d\TH:i:sP', $dateUpdated)));
 
+
+
         }
         return $dom->saveXML();
     }
 
     private function _createEntrySectionQuery(): Query
     {
+
+        $subQuery = (new Query())
+            ->select('COUNT(DISTINCT other_elements_sites.id)')
+            ->from('{{%elements_sites}} other_elements_sites')
+            ->where('[[other_elements_sites.elementId]] = [[elements_sites.elementId]] AND [[other_elements_sites.enabled]] = 1');
         return (new Query())
             ->select([
                 'elements_sites.uri uri',
@@ -136,6 +161,11 @@ class SitemapController extends Controller
                 'elements_sites.siteId',
                 'sitemap_entries.changefreq changefreq',
                 'sitemap_entries.priority priority',
+                'sites.language siteLanguage',
+                'elements.id elementId',
+                'alternateLinkCount' => $subQuery,
+
+                
             ])
             ->from(['{{%sections}} sections'])
             ->innerJoin('{{%dolphiq_sitemap_entries}} sitemap_entries', '[[sections.id]] = [[sitemap_entries.linkId]] AND [[sitemap_entries.type]] = "section"')
@@ -146,6 +176,22 @@ class SitemapController extends Controller
             ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
             ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
 
+            ->groupBy(['elements_sites.id']);
+    }
+
+    private function _createAlternateSectionQuery($elementId): Query
+    {
+        return (new Query())
+            ->select([
+                'elements_sites.uri uri',
+                'elements_sites.dateUpdated dateUpdated',
+                'elements_sites.siteId',
+                'sites.language siteLanguate',
+            ])
+            ->from('{{%elements}} elements')
+            ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
+            ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
+            ->where(['=', '[[elements_sites.elementId]]', $elementId])
             ->groupBy(['elements_sites.id']);
     }
 
