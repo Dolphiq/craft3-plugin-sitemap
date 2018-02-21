@@ -111,12 +111,7 @@ class Sitemap extends Plugin
     {
         parent::init();
         self::$plugin = $this;
-<<<<<<< HEAD
-
-
-=======
         
->>>>>>> origin/master
         // Register our CP routes
         Event::on(
             UrlManager::class,
