@@ -1,4 +1,12 @@
 # sitemap Changelog
+
+## 1.0.8 - 2018-02-21
+### Fixed
+- Fixed a bug causing the settings routes and section not available in with Craft CMS 3.0.0-RC11
+
+### Changed
+- The required minimal Craft version and checked the compatibility
+
 ## 1.0.7 - 2018-01-18
 
 ### Fixed
