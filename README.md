@@ -12,8 +12,21 @@ You can enable and set the settings per entries section and enable categories in
 After saving the desired settings, you can submit the xml url (your site url)/sitemap.xml to the searchengines.
 
 ## Sitemap structure
-The sitemap is compatible with the ![sitemaps.org](https://www.sitemaps.org/protocol.html) protocol.
+The sitemap is compatible with the [sitemaps.org](https://www.sitemaps.org/protocol.html) protocol.
 
+In version 1.0.9 we added support for alternate languages to give [Google a better change to point to the correct page](https://support.google.com/webmasters/answer/2620865?hl=en).
+```
+  <url>
+    <loc>https://othersite.local/news/news-item-1</loc>
+    <priority>0.5</priority>
+    <changefreq>weekly</changefreq>
+    <lastmod>2018-02-21T21:09:47+01:00</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-gb" href="http://dev.craft/news/news-item-1"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://othersite.local/news/news-item-1"/>
+    <xhtml:link rel="alternate" hreflang="nl-nl" href="https://othersite.local/nl/news/news-item-1"/>
+    <xhtml:link rel="alternate" hreflang="de-ch" href="https://othersite.local/ch/nachrichten/news-item-1"/>
+  </url>
+```
 ## Requirements
 
 This plugin requires Craft CMS 3.0.0-RC11 or later.
