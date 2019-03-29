@@ -12,6 +12,7 @@ namespace dolphiq\sitemap\services;
 
 use Craft;
 use craft\base\Component;
+use craft\db\Table;
 use craft\events\ConfigEvent;
 use craft\events\RebuildConfigEvent;
 use craft\helpers\Db;
@@ -37,7 +38,6 @@ class SitemapService extends Component
      * Key for the project config
      */
     const PROJECT_CONFIG_KEY = 'dolphiq_sitemap_entries';
-
     // Public Methods
     // =========================================================================
 
@@ -56,23 +56,34 @@ class SitemapService extends Component
     {
         // is it a new one?
         $isNew = empty($record->id);
-        if($isNew){
+        if ($isNew) {
             $record->uid = StringHelper::UUID();
-        } else if (!$record->uid) {
-            $record->uid = Db::uidById(SitemapEntry::tableName(), $record->id);
+        } else {
+            if (!$record->uid) {
+                $record->uid = Db::uidById(SitemapEntry::tableName(), $record->id);
+            }
         }
 
         if (!$record->validate()) {
             return false;
         }
         $path = self::PROJECT_CONFIG_KEY . ".{$record->uid}";
+
+        $uidById = $record->type === 'section' ? Db::uidById(Table::SECTIONS, $record->linkId) : Db::uidById(
+            Table::CATEGORIES,
+            $record->linkId
+        );
+
         // set it in the config
-        Craft::$app->getProjectConfig()->set($path, [
-            'linkId' => $record->linkId,
-            'type' => $record->type,
-            'priority' => $record->priority,
-            'changefreq' => $record->changefreq,
-        ]);
+        Craft::$app->getProjectConfig()->set(
+            $path,
+            [
+                'linkId'     => $uidById,
+                'type'       => $record->type,
+                'priority'   => $record->priority,
+                'changefreq' => $record->changefreq,
+            ]
+        );
 
         if ($isNew) {
             $record->id = Db::idByUid(SitemapEntry::tableName(), $record->uid);
@@ -107,10 +118,15 @@ class SitemapService extends Component
             $record = new SitemapEntry();
         } else {
             // update an existing one
-            $record = SitemapEntry::findOne((int)$id);
+            $record = SitemapEntry::findOne((int) $id);
         }
 
-        $record->linkId = $event->newValue['linkId'];
+        $idByUid = $event->newValue['type'] === 'section' ? Db::idByUid(
+            Table::SECTIONS,
+            $event->newValue['linkId']
+        ) : Db::idByUid(Table::CATEGORIES, $event->newValue['linkId']);
+
+        $record->linkId = $idByUid;
         $record->type = $event->newValue['type'];
         $record->priority = $event->newValue['priority'];
         $record->changefreq = $event->newValue['changefreq'];
@@ -130,7 +146,7 @@ class SitemapService extends Component
         $uid = $event->tokenMatches[0];
         // grab the record
         $record = SitemapEntry::find()->where(['uid' => $uid])->one();
-        if($record === null){
+        if ($record === null) {
             return;
         }
 
@@ -147,7 +163,7 @@ class SitemapService extends Component
     {
         /** @var SitemapEntry[] $records */
         $records = SitemapEntry::find()->all();
-        foreach ($records as $record){
+        foreach ($records as $record) {
 
             $e->config[self::PROJECT_CONFIG_KEY][$record->uid] = [
 
