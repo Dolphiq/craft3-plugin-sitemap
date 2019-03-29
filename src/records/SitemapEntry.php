@@ -10,9 +10,6 @@
 
 namespace dolphiq\sitemap\records;
 
-use dolphiq\sitemap\Sitemap;
-
-use Craft;
 use craft\db\ActiveRecord;
 
 /**
@@ -30,10 +27,14 @@ use craft\db\ActiveRecord;
  * @author    Johan Zandstra
  * @package   Sitemap
  * @since     1.0.0
+ * @property int    $id
+ * @property int    $linkId
+ * @property string $type
+ * @property float  $priority
+ * @property string $changefreq
  */
 class SitemapEntry extends ActiveRecord
 {
-
     // Properties
     // =========================================================================
 
@@ -45,22 +46,22 @@ class SitemapEntry extends ActiveRecord
     /**
      * @var string|null type
      */
-  //  public $type;
+    //  public $type;
 
     /**
      * @var string|null changefreq
      */
-   // public $changefreq;
+    // public $changefreq;
 
     /**
      * @var double|null priority
      */
-  //  public $priority;
+    //  public $priority;
 
     // Public Static Methods
     // =========================================================================
 
-     /**
+    /**
      * Declares the name of the database table associated with this AR class.
      * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
