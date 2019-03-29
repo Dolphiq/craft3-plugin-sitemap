@@ -126,6 +126,7 @@ class SitemapService extends Component
             $event->newValue['linkId']
         ) : Db::idByUid(Table::CATEGORIES, $event->newValue['linkId']);
 
+        $record->uid = $uid;
         $record->linkId = $idByUid;
         $record->type = $event->newValue['type'];
         $record->priority = $event->newValue['priority'];
@@ -163,11 +164,24 @@ class SitemapService extends Component
     {
         /** @var SitemapEntry[] $records */
         $records = SitemapEntry::find()->all();
+        $e->config[self::PROJECT_CONFIG_KEY] = [];
         foreach ($records as $record) {
-
             $e->config[self::PROJECT_CONFIG_KEY][$record->uid] = [
-
+                'linkId' => $this->getUidById($record),
+                'type' => $record->type,
+                'priority' => $record->priority,
+                'changefreq' => $record->changefreq,
             ];
         }
+    }
+
+    public function getUidById(SitemapEntry $record)
+    {
+        $uid = $record->type === 'section' ? Db::uidById(
+            Table::SECTIONS,
+            $record->linkId
+        ) : Db::uidById(Table::CATEGORIES, $record->linkId);
+
+        return $uid;
     }
 }
