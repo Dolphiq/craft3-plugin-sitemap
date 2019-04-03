@@ -104,7 +104,7 @@ class SitemapController extends Controller
         foreach($this->_createEntrySectionQuery()->all() as $item) {
             $loc = $this->getUrl($item['uri'], $item['siteId']);
             if($loc === null) continue;
-            
+
             $url = $dom->createElement('url');
             $urlset->appendChild($url);
             $url->appendChild($dom->createElement('loc', $loc));
@@ -165,7 +165,7 @@ class SitemapController extends Controller
                 'elements.id elementId',
                 'alternateLinkCount' => $subQuery,
 
-                
+
             ])
             ->from(['{{%sections}} sections'])
             ->innerJoin('{{%dolphiq_sitemap_entries}} sitemap_entries', '[[sections.id]] = [[sitemap_entries.linkId]] AND [[sitemap_entries.type]] = "section"')
@@ -175,7 +175,7 @@ class SitemapController extends Controller
             ->innerJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
             ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
             ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
-
+            ->andWhere(['elements.dateDeleted' => null])
             ->groupBy(['elements_sites.id']);
     }
 
@@ -212,6 +212,7 @@ class SitemapController extends Controller
             ->innerJoin('{{%elements}} elements', '[[elements.id]] = [[categories.id]] AND [[elements.enabled]] = 1')
             ->innerJoin('{{%elements_sites}} elements_sites', '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
             ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
+            ->andWhere(['elements.dateDeleted' => null])
             ->groupBy(['elements_sites.id']);
     }
 
