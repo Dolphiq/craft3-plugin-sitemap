@@ -14,7 +14,7 @@ After saving the desired settings, you can submit the xml url (your site url)/si
 ## Sitemap structure
 The sitemap is compatible with the [sitemaps.org](https://www.sitemaps.org/protocol.html) protocol.
 
-In version 1.0.9 we added support for alternate languages to give [Google a better change to point to the correct page](https://support.google.com/webmasters/answer/2620865?hl=en).
+In version 1.0.9 we added support for alternate languages to give [Google a better chance to point to the correct page](https://support.google.com/webmasters/answer/2620865?hl=en).
 ```
   <url>
     <loc>https://othersite.local/news/news-item-1</loc>
