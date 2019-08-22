@@ -10,10 +10,14 @@
 
 namespace dolphiq\sitemap\services;
 
-use dolphiq\sitemap\Sitemap;
-
 use Craft;
 use craft\base\Component;
+use craft\db\Table;
+use craft\events\ConfigEvent;
+use craft\events\RebuildConfigEvent;
+use craft\helpers\Db;
+use craft\helpers\StringHelper;
+use dolphiq\sitemap\records\SitemapEntry;
 
 /**
  * SitemapService Service
@@ -30,26 +34,154 @@ use craft\base\Component;
  */
 class SitemapService extends Component
 {
+    /**
+     * Key for the project config
+     */
+    const PROJECT_CONFIG_KEY = 'dolphiq_sitemap_entries';
     // Public Methods
     // =========================================================================
 
     /**
-     * This function can literally be anything you want, and you can have as many service
-     * functions as you want
+     * Save a new entry to the project config
      *
-     * From any other plugin file, call it like this:
+     * @param \dolphiq\sitemap\records\SitemapEntry $record
      *
-     *     Sitemap::$plugin->sitemapService->exampleService()
-     *
-     * @return mixed
+     * @throws \yii\base\ErrorException
+     * @throws \yii\base\Exception
+     * @throws \yii\base\NotSupportedException
+     * @throws \yii\web\ServerErrorHttpException
+     * @return bool
      */
-    public function exampleService()
+    public function saveEntry(SitemapEntry $record): bool
     {
-        $result = 'something';
-        // Check our Plugin's settings for `someAttribute`
-        if (Sitemap::$plugin->getSettings()->someAttribute) {
+        // is it a new one?
+        $isNew = empty($record->id);
+        if ($isNew) {
+            $record->uid = StringHelper::UUID();
+        } else {
+            if (!$record->uid) {
+                $record->uid = Db::uidById(SitemapEntry::tableName(), $record->id);
+            }
         }
 
-        return $result;
+        if (!$record->validate()) {
+            return false;
+        }
+        $path = self::PROJECT_CONFIG_KEY . ".{$record->uid}";
+
+        $uidById = $record->type === 'section' ? Db::uidById(Table::SECTIONS, $record->linkId) : Db::uidById(
+            Table::CATEGORIES,
+            $record->linkId
+        );
+
+        // set it in the config
+        Craft::$app->getProjectConfig()->set(
+            $path,
+            [
+                'linkId'     => $uidById,
+                'type'       => $record->type,
+                'priority'   => $record->priority,
+                'changefreq' => $record->changefreq,
+            ]
+        );
+
+        if ($isNew) {
+            $record->id = Db::idByUid(SitemapEntry::tableName(), $record->uid);
+        }
+
+        return true;
+    }
+
+    /**
+     * Delete an entry from project config
+     *
+     * @param \dolphiq\sitemap\records\SitemapEntry $record
+     */
+    public function deleteEntry(SitemapEntry $record)
+    {
+        $path = self::PROJECT_CONFIG_KEY . ".{$record->uid}";
+        Craft::$app->projectConfig->remove($path);
+    }
+
+    /**
+     * handleChangedSiteMapEntry
+     *
+     * @param \craft\events\ConfigEvent $event
+     */
+    public function handleChangedSiteMapEntry(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $id = Db::idByUid(SitemapEntry::tableName(), $uid);
+
+        if ($id === null) {
+            // new one
+            $record = new SitemapEntry();
+        } else {
+            // update an existing one
+            $record = SitemapEntry::findOne((int) $id);
+        }
+
+        $idByUid = $event->newValue['type'] === 'section' ? Db::idByUid(
+            Table::SECTIONS,
+            $event->newValue['linkId']
+        ) : Db::idByUid(Table::CATEGORIES, $event->newValue['linkId']);
+
+        $record->uid = $uid;
+        $record->linkId = $idByUid;
+        $record->type = $event->newValue['type'];
+        $record->priority = $event->newValue['priority'];
+        $record->changefreq = $event->newValue['changefreq'];
+        $record->save();
+    }
+
+    /**
+     * handleDeletedSiteMapEntry
+     *
+     * @param \craft\events\ConfigEvent $event
+     *
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
+     */
+    public function handleDeletedSiteMapEntry(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        // grab the record
+        $record = SitemapEntry::find()->where(['uid' => $uid])->one();
+        if ($record === null) {
+            return;
+        }
+
+        // delete it
+        $record->delete();
+    }
+
+    /**
+     * rebuildProjectConfig
+     *
+     * @param \craft\events\RebuildConfigEvent $e
+     */
+    public function rebuildProjectConfig(RebuildConfigEvent $e)
+    {
+        /** @var SitemapEntry[] $records */
+        $records = SitemapEntry::find()->all();
+        $e->config[self::PROJECT_CONFIG_KEY] = [];
+        foreach ($records as $record) {
+            $e->config[self::PROJECT_CONFIG_KEY][$record->uid] = [
+                'linkId' => $this->getUidById($record),
+                'type' => $record->type,
+                'priority' => $record->priority,
+                'changefreq' => $record->changefreq,
+            ];
+        }
+    }
+
+    public function getUidById(SitemapEntry $record)
+    {
+        $uid = $record->type === 'section' ? Db::uidById(
+            Table::SECTIONS,
+            $record->linkId
+        ) : Db::uidById(Table::CATEGORIES, $record->linkId);
+
+        return $uid;
     }
 }

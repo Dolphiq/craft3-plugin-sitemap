@@ -1,5 +1,9 @@
 # sitemap Changelog
 
+## 1.1.0 - 2019-03-29
+### Added
+- Added Craft CMS 3.1.20 Project Config Support
+
 ## 1.0.9 - 2018-02-21
 ### Added
 - Added support for alternate language support for Google for multi language websites
