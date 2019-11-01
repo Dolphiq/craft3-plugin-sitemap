@@ -1,5 +1,9 @@
 # sitemap Changelog
 
+## 1.2.0 - 2019-11-01
+### Fixed
+- Fixed compatibility with Craft CMS 3.2 +
+
 ## 1.1.0 - 2019-03-29
 ### Added
 - Added Craft CMS 3.1.20 Project Config Support
