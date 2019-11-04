@@ -3,6 +3,8 @@
 ## 1.2.0 - 2019-11-01
 ### Fixed
 - Fixed compatibility with Craft CMS 3.2 +
+- Fixed showing multiple records for revisions
+- Fixed bug showing url's with expired dates
 
 ## 1.1.0 - 2019-03-29
 ### Added

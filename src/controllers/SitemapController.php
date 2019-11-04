@@ -140,6 +140,8 @@ class SitemapController extends Controller
     private function _createEntrySectionQuery(): Query
     {
 
+
+        $currentDate =  date("Y-m-d H:i:s");
         $subQuery = (new Query())
             ->select('COUNT(DISTINCT other_elements_sites.id)')
             ->from('{{%elements_sites}} other_elements_sites')
@@ -154,8 +156,6 @@ class SitemapController extends Controller
                 'sites.language siteLanguage',
                 'elements.id elementId',
                 'alternateLinkCount' => $subQuery,
-
-
             ])
             ->from(['{{%sections}} sections'])
             ->innerJoin('{{%dolphiq_sitemap_entries}} sitemap_entries',
@@ -164,11 +164,18 @@ class SitemapController extends Controller
             ->innerJoin('{{%sections_sites}} sections_sites',
                 '[[sections_sites.sectionId]] = [[sections.id]] AND [[sections_sites.hasUrls]] = 1')
             ->innerJoin('{{%entries}} entries', '[[sections.id]] = [[entries.sectionId]]')
+            ->andWhere(['<=', 'entries.postDate', $currentDate])
+            ->andWhere(['>', 'entries.expiryDate', $currentDate])
+            ->orWhere(['entries.expiryDate'=> null])
             ->innerJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
             ->innerJoin('{{%elements_sites}} elements_sites',
                 '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
             ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
             ->andWhere(['elements.dateDeleted' => null])
+            ->andWhere(['elements.archived' => false])
+            ->andWhere(['elements.revisionId' => null])
+
+
             ->groupBy(['elements_sites.id']);
     }
 
