@@ -173,6 +173,7 @@ class SitemapController extends Controller
             ->innerJoin('{{%sites}} sites', '[[elements_sites.siteId]] = [[sites.id]]')
             ->andWhere(['elements.dateDeleted' => null])
             ->andWhere(['elements.archived' => false])
+            ->andWhere(['elements.draftId' => null])
             ->andWhere(['elements.revisionId' => null])
 
 
