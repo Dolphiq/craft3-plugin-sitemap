@@ -173,6 +173,7 @@ class SitemapController extends Controller
             ->andWhere(['elements.dateDeleted' => null])
             ->andWhere(['sites.dateDeleted' => null])
             ->andWhere(['elements.archived' => false])
+            ->andWhere(['elements.draftId' => null])
             ->andWhere(['elements.revisionId' => null])
             ->groupBy(['elements_sites.id']);
     }
