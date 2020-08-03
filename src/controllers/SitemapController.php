@@ -165,8 +165,7 @@ class SitemapController extends Controller
                 '[[sections_sites.sectionId]] = [[sections.id]] AND [[sections_sites.hasUrls]] = 1')
             ->innerJoin('{{%entries}} entries', '[[sections.id]] = [[entries.sectionId]]')
             ->andWhere(['<=', 'entries.postDate', $currentDate])
-            ->andWhere(['>', 'entries.expiryDate', $currentDate])
-            ->orWhere(['entries.expiryDate'=> null])
+            ->andWhere(['or', 'entries.expiryDate > :currentDate', 'entries.expiryDate is null'], [':currentDate' => $currentDate])
             ->innerJoin('{{%elements}} elements', '[[entries.id]] = [[elements.id]] AND [[elements.enabled]] = 1')
             ->innerJoin('{{%elements_sites}} elements_sites',
                 '[[elements_sites.elementId]] = [[elements.id]] AND [[elements_sites.enabled]] = 1')
