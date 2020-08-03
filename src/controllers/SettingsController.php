@@ -72,6 +72,7 @@ class SettingsController extends Controller
             ->leftJoin('{{%dolphiq_sitemap_entries}} sitemap_entries', '[[sections.id]] = [[sitemap_entries.linkId]] AND [[sitemap_entries.type]] = "section"')
 
             ->groupBy(['sections.id'])
+            ->where(['sections.dateDeleted' => null])
         ->orderBy(['type' => SORT_ASC],['name' => SORT_ASC]);
     }
 
