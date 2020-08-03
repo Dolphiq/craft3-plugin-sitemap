@@ -2,7 +2,7 @@
     "name": "dolphiq/sitemap",
     "description": "Craft 3 plugin that provides an easy way to provide and manage a XML sitemap for search engines like Google and Bing",
     "type": "craft-plugin",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "keywords": [
         "craft",
         "cms",
