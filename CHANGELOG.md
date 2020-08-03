@@ -1,4 +1,9 @@
 # sitemap Changelog
+## 1.3.0 - 2030-07-03
+### Fixed
+- Fixed compatibility with Craft CMS 3.4 +
+- Added fix for deleted sites
+- Fix and/or operation order
 
 ## 1.2.0 - 2019-11-01
 ### Fixed
