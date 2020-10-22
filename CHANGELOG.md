@@ -1,5 +1,10 @@
 # sitemap Changelog
-## 1.3.0 - 2030-07-03
+## 1.3.1 - 2020-07-03
+### Fixed
+- Fixed error when adding a category by changing table used to `Table::CATEGORYGROUPS`
+- Added empty check for linkId to prevend future type errors 
+
+## 1.3.0 - 2020-07-03
 ### Fixed
 - Fixed compatibility with Craft CMS 3.4 +
 - Added fix for deleted sites
