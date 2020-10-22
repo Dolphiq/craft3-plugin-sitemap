@@ -70,7 +70,7 @@ class SitemapService extends Component
         $path = self::PROJECT_CONFIG_KEY . ".{$record->uid}";
 
         $uidById = $record->type === 'section' ? Db::uidById(Table::SECTIONS, $record->linkId) : Db::uidById(
-            Table::CATEGORIES,
+            Table::CATEGORYGROUPS,
             $record->linkId
         );
 
@@ -121,17 +121,19 @@ class SitemapService extends Component
             $record = SitemapEntry::findOne((int) $id);
         }
 
-        $idByUid = $event->newValue['type'] === 'section' ? Db::idByUid(
-            Table::SECTIONS,
-            $event->newValue['linkId']
-        ) : Db::idByUid(Table::CATEGORIES, $event->newValue['linkId']);
+        if (!empty($event->newValue['linkId'])) {
+            $idByUid = $event->newValue['type'] === 'section' ? Db::idByUid(
+                Table::SECTIONS,
+                $event->newValue['linkId']
+            ) : Db::idByUid(Table::CATEGORYGROUPS, $event->newValue['linkId']);
 
-        $record->uid = $uid;
-        $record->linkId = $idByUid;
-        $record->type = $event->newValue['type'];
-        $record->priority = $event->newValue['priority'];
-        $record->changefreq = $event->newValue['changefreq'];
-        $record->save();
+            $record->uid = $uid;
+            $record->linkId = $idByUid;
+            $record->type = $event->newValue['type'];
+            $record->priority = $event->newValue['priority'];
+            $record->changefreq = $event->newValue['changefreq'];
+            $record->save();
+        }
     }
 
     /**
