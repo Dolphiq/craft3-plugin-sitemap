@@ -1,5 +1,5 @@
 # sitemap Changelog
-## 1.3.12- 2020-10-27
+## 1.3.2- 2020-10-27
 ### Fixed
 - Changed the uppercase "S" to a lowercase "s" to fix a Composer 2 compatibility issue.
 
