@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2017 Johan Zandstra
  */
 
-namespace dolphiq\sitemap\assetbundles\Sitemap;
+namespace dolphiq\sitemap\assetbundles\sitemap;
 
 use Craft;
 use craft\web\AssetBundle;
