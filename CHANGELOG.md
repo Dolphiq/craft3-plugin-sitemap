@@ -1,5 +1,9 @@
 # sitemap Changelog
-## 1.3.1 - 2020-07-03
+## 1.3.2- 2020-10-27
+### Fixed
+- Changed the uppercase "S" to a lowercase "s" to fix a Composer 2 compatibility issue.
+
+## 1.3.1 - 2020-10-22
 ### Fixed
 - Fixed error when adding a category by changing table used to `Table::CATEGORYGROUPS`
 - Added empty check for linkId to prevend future type errors 
