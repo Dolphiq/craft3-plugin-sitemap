@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.2.0",
+        "craftcms/cms": "^4.0.0",
         "jaybizzle/crawler-detect": "1.*"
     },
     "repositories": [
