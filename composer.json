@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.2.0",
+        "craftcms/cms": "^4.0.0",
         "jaybizzle/crawler-detect": "1.*"
     },
     "repositories": [
@@ -51,5 +51,16 @@
         "changelogUrl": "https://github.com/Dolphiq/craft3-plugin-sitemap/blob/master/CHANGELOG.md",
 
         "class": "dolphiq\\sitemap\\Sitemap"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "craftcms/rector": "dev-main"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }

@@ -43,7 +43,7 @@ use yii\web\Response;
  */
 class SitemapController extends Controller
 {
-    protected $allowAnonymous = ['index'];
+    protected array|int|bool $allowAnonymous = ['index'];
     private $_sourceRouteParams = [];
     // Public Methods
 // =========================================================================
