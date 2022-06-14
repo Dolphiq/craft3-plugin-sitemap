@@ -53,17 +53,17 @@ class Sitemap extends Plugin
     // Public Methods
     // =========================================================================
 
-    public $hasCpSection = true;
-    public $hasCpSettings = true;
+    public bool $hasCpSection = true;
+    public bool $hasCpSettings = true;
     // table schema version
-    public $schemaVersion = '1.0.2';
+    public string $schemaVersion = '1.0.2';
 
     /**
      * Return the settings response (if some one clicks on the settings/plugin icon)
      *
      */
 
-    public function getSettingsResponse()
+    public function getSettingsResponse(): mixed
     {
         $url = \craft\helpers\UrlHelper::cpUrl('settings/sitemap');
 
@@ -166,7 +166,7 @@ class Sitemap extends Plugin
      *
      * @return \craft\base\Model|null
      */
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?\craft\base\Model
     {
         return new Settings();
     }
@@ -175,11 +175,11 @@ class Sitemap extends Plugin
      * Returns the rendered settings HTML, which will be inserted into the content
      * block on the settings page.
      *
-     * @throws \Twig_Error_Loader
+     * @throws \Twig\Error\LoaderError
      * @throws \yii\base\Exception
      * @return string The rendered settings HTML
      */
-    protected function settingsHtml(): string
+    protected function settingsHtml(): ?string
     {
         return Craft::$app->view->renderTemplate(
             'sitemap/settings',
