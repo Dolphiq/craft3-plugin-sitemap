@@ -1,5 +1,7 @@
 # XML-sitemap plugin for Craft CMS 3
 
+## Currently the project is *DISCONTINUED*. However, feel free to fork it and continue its development!
+
 Craft 3 plugin that provides an easy way to enable and manage a XML sitemap for search engines like Google and Bing
 
 ![Screenshot](resources/screenshots/screenshot1.png)
